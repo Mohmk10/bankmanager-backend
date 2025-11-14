@@ -238,9 +238,8 @@ docker run -p 8080:8080 bankmanager-backend
 
 ## 👨‍💻 Auteur
 
-**Votre Nom**
-- GitHub: [@votre-username](https://github.com/votre-username)
-- LinkedIn: [Votre Profil](https://linkedin.com/in/votre-profil)
+MOHAMED M KOUYATÉ
+- GitHub: [@votre-username](https://github.com/Mohmk)
 
 ---
 
