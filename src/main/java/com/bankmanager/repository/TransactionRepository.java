@@ -29,4 +29,10 @@ public interface TransactionRepository extends JpaRepository<Transaction, UUID> 
 
     @Query("SELECT SUM(t.montant) FROM Transaction t WHERE t.compte.id = :compteId AND t.type = :type")
     BigDecimal sumMontantByCompteAndType(UUID compteId, TypeTransaction type);
+
+    List<Transaction> findAllByOrderByDateTransactionDesc();
+
+    long countByDateTransactionAfter(LocalDateTime dateDebut);
+
+    List<Transaction> findByDateTransactionAfterOrderByDateTransactionDesc(LocalDateTime dateDebut);
 }

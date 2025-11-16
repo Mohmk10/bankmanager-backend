@@ -1,19 +1,19 @@
 package com.bankmanager.service;
 
-import com.bankmanager.dto.response.CompteResponse;
+import com.bankmanager.dto.response.CompteRecentResponse;
 import com.bankmanager.dto.response.DashboardResponse;
-import com.bankmanager.dto.response.TransactionResponse;
+import com.bankmanager.dto.response.TransactionRecenteResponse;
+import com.bankmanager.entity.Compte;
+import com.bankmanager.entity.Transaction;
 import com.bankmanager.repository.CompteRepository;
 import com.bankmanager.repository.TransactionRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,40 +23,64 @@ public class DashboardService {
 
     private final CompteRepository compteRepository;
     private final TransactionRepository transactionRepository;
-    private final CompteService compteService;
-    private final TransactionService transactionService;
 
     @Transactional(readOnly = true)
     public DashboardResponse getDashboardData() {
-        long totalComptes = compteRepository.countActiveComptes();
+        // Récupérer uniquement les comptes actifs
+        List<Compte> comptesActifs = compteRepository.findByIsActive(true);
 
-        BigDecimal soldeTotal = compteRepository.getTotalSolde();
-        if (soldeTotal == null) {
-            soldeTotal = BigDecimal.ZERO;
-        }
+        BigDecimal soldeTotal = comptesActifs.stream()
+                .map(Compte::getSolde)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        LocalDateTime startOfDay = LocalDateTime.now().with(LocalTime.MIN);
-        LocalDateTime endOfDay = LocalDateTime.now().with(LocalTime.MAX);
-        long transactionsDuJour = transactionRepository.countTodayTransactions(startOfDay, endOfDay);
+        LocalDateTime debutJour = LocalDate.now().atStartOfDay();
+        LocalDateTime finJour = debutJour.plusDays(1);
+        long transactionsDuJour = transactionRepository.countTodayTransactions(debutJour, finJour);
 
-        List<CompteResponse> comptesRecents = compteRepository
-                .findAll(PageRequest.of(0, 5, Sort.by(Sort.Direction.DESC, "createdAt")))
+        // Les 5 derniers comptes créés (actifs uniquement)
+        List<CompteRecentResponse> comptesRecents = compteRepository
+                .findAllByOrderByCreatedAtDesc()
                 .stream()
-                .map(compte -> compteService.getCompteById(compte.getId()))
+                .filter(Compte::getIsActive) // Filtrer uniquement les actifs
+                .limit(5)
+                .map(this::toCompteRecentResponse)
                 .collect(Collectors.toList());
 
-        List<TransactionResponse> transactionsRecentes = transactionRepository
-                .findAll(PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "dateTransaction")))
+        // Les 5 dernières transactions
+        List<TransactionRecenteResponse> transactionsRecentes = transactionRepository
+                .findAllByOrderByDateTransactionDesc()
                 .stream()
-                .map(transaction -> transactionService.getTransactionById(transaction.getId()))
+                .limit(5)
+                .map(this::toTransactionRecenteResponse)
                 .collect(Collectors.toList());
 
         return DashboardResponse.builder()
-                .totalComptes(totalComptes)
+                .totalComptes(comptesActifs.size())
                 .soldeTotal(soldeTotal)
-                .transactionsDuJour(transactionsDuJour)
+                .transactionsDuJour((int) transactionsDuJour)
                 .comptesRecents(comptesRecents)
                 .transactionsRecentes(transactionsRecentes)
+                .build();
+    }
+
+    private CompteRecentResponse toCompteRecentResponse(Compte compte) {
+        return CompteRecentResponse.builder()
+                .id(compte.getId())
+                .numeroCompte(compte.getNumeroCompte())
+                .solde(compte.getSolde())
+                .typeCompte(compte.getTypeCompte().name())
+                .clientNomComplet(compte.getClient().getPrenom() + " " + compte.getClient().getNom())
+                .build();
+    }
+
+    private TransactionRecenteResponse toTransactionRecenteResponse(Transaction transaction) {
+        return TransactionRecenteResponse.builder()
+                .id(transaction.getId())
+                .idTransaction(transaction.getIdTransaction())
+                .type(transaction.getType().name())
+                .montant(transaction.getMontant())
+                .numeroCompte(transaction.getCompte().getNumeroCompte())
+                .dateTransaction(transaction.getDateTransaction())
                 .build();
     }
 }

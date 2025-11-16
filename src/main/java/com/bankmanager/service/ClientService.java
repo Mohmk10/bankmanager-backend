@@ -10,6 +10,8 @@ import com.bankmanager.repository.ClientRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.bankmanager.entity.Compte;
+import com.bankmanager.repository.CompteRepository;
 
 import java.util.List;
 import java.util.UUID;
@@ -20,6 +22,7 @@ import java.util.stream.Collectors;
 public class ClientService {
 
     private final ClientRepository clientRepository;
+    private final CompteRepository compteRepository;
 
     @Transactional
     public ClientResponse createClient(CreateClientRequest request) {
@@ -47,25 +50,20 @@ public class ClientService {
     }
 
     @Transactional(readOnly = true)
-    public List<ClientResponse> getAllClients() {
-        return clientRepository.findAll().stream()
-                .map(this::mapToClientResponse)
-                .collect(Collectors.toList());
+    public List<ClientResponse> getAllClients(Boolean active, String search) {
+        List<Client> clients;
+
+        if (search != null && !search.isEmpty()) {
+            clients = clientRepository.findByNomContainingIgnoreCaseOrPrenomContainingIgnoreCase(search, search);
+        } else if (active != null) {
+            clients = clientRepository.findByIsActive(active);
+        } else {
+            clients = clientRepository.findAll();
+        }
+
+        return clients.stream().map(this::mapToClientResponse).collect(Collectors.toList());
     }
 
-    @Transactional(readOnly = true)
-    public List<ClientResponse> getActiveClients() {
-        return clientRepository.findByIsActiveTrue().stream()
-                .map(this::mapToClientResponse)
-                .collect(Collectors.toList());
-    }
-
-    @Transactional(readOnly = true)
-    public List<ClientResponse> searchClients(String search) {
-        return clientRepository.searchClients(search).stream()
-                .map(this::mapToClientResponse)
-                .collect(Collectors.toList());
-    }
 
     @Transactional
     public ClientResponse updateClient(UUID id, UpdateClientRequest request) {
@@ -98,8 +96,14 @@ public class ClientService {
 
     @Transactional
     public void deleteClient(UUID id) {
-        Client client = clientRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Client non trouvé"));
+        Client client = clientRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Client non trouvé"));
+
+        List<Compte> comptes = compteRepository.findByClientId(id);
+        for (Compte compte : comptes) {
+            compte.setIsActive(false);
+            compteRepository.save(compte);
+        }
+
         client.setIsActive(false);
         clientRepository.save(client);
     }

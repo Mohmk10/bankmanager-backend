@@ -23,7 +23,7 @@ public class ClientController {
     @PostMapping
     public ResponseEntity<ClientResponse> createClient(@Valid @RequestBody CreateClientRequest request) {
         ClientResponse response = clientService.createClient(request);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @GetMapping("/{id}")
@@ -37,16 +37,7 @@ public class ClientController {
             @RequestParam(required = false) Boolean active,
             @RequestParam(required = false) String search) {
 
-        List<ClientResponse> response;
-
-        if (search != null && !search.isEmpty()) {
-            response = clientService.searchClients(search);
-        } else if (active != null && active) {
-            response = clientService.getActiveClients();
-        } else {
-            response = clientService.getAllClients();
-        }
-
+        List<ClientResponse> response = clientService.getAllClients(active, search);
         return ResponseEntity.ok(response);
     }
 

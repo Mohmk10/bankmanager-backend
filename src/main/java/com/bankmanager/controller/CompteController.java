@@ -39,16 +39,10 @@ public class CompteController {
     }
 
     @GetMapping
-    public ResponseEntity<List<CompteResponse>> getAllComptes(@RequestParam(required = false) Boolean active) {
-        List<CompteResponse> response;
-
-        if (active != null && active) {
-            response = compteService.getActiveComptes();
-        } else {
-            response = compteService.getAllComptes();
-        }
-
-        return ResponseEntity.ok(response);
+    public ResponseEntity<List<CompteResponse>> getAllComptes(
+            @RequestParam(required = false) Boolean active) {
+        List<CompteResponse> comptes = compteService.getAllComptes(active);
+        return ResponseEntity.ok(comptes);
     }
 
     @GetMapping("/client/{clientId}")

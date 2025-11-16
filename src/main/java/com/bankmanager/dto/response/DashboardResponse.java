@@ -9,13 +9,13 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class DashboardResponse {
-    private long totalComptes;
+    private int totalComptes;
     private BigDecimal soldeTotal;
-    private long transactionsDuJour;
-    private List<CompteResponse> comptesRecents;
-    private List<TransactionResponse> transactionsRecentes;
+    private int transactionsDuJour;
+    private List<CompteRecentResponse> comptesRecents;
+    private List<TransactionRecenteResponse> transactionsRecentes;
 }

@@ -19,4 +19,10 @@ public interface ClientRepository extends JpaRepository<Client, UUID> {
             "OR LOWER(c.prenom) LIKE LOWER(CONCAT('%', :search, '%')) " +
             "OR LOWER(c.email) LIKE LOWER(CONCAT('%', :search, '%'))")
     List<Client> searchClients(String search);
+
+    List<Client> findByIsActive(boolean isActive);
+
+    long countByIsActiveTrue();
+
+    List<Client> findByNomContainingIgnoreCaseOrPrenomContainingIgnoreCase(String nom, String prenom);
 }

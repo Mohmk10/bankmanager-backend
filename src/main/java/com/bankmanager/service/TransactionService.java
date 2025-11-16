@@ -34,7 +34,11 @@ public class TransactionService {
                 .orElseThrow(() -> new ResourceNotFoundException("Compte non trouvé"));
 
         if (!compte.getIsActive()) {
-            throw new BusinessException("Le compte est inactif");
+            throw new BusinessException("Ce compte est inactif. Impossible d'effectuer des transactions.");
+        }
+
+        if (!compte.getClient().getIsActive()) {
+            throw new BusinessException("Le client propriétaire de ce compte est inactif.");
         }
 
         if (request.getType() == TypeTransaction.RETRAIT) {
