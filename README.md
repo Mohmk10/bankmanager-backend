@@ -2,6 +2,17 @@
 
 Application backend de gestion bancaire développée avec **Spring Boot 3** et **Java 21**.
 
+## 🛠️ Technologies
+
+![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
+![Spring Boot](https://img.shields.io/badge/Spring_Boot-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white)
+![Spring Security](https://img.shields.io/badge/Spring_Security-6DB33F?style=for-the-badge&logo=spring-security&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)
+![Hibernate](https://img.shields.io/badge/Hibernate-59666C?style=for-the-badge&logo=hibernate&logoColor=white)
+![Maven](https://img.shields.io/badge/Maven-C71A36?style=for-the-badge&logo=apache-maven&logoColor=white)
+![JWT](https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=json-web-tokens&logoColor=white)
+![Lombok](https://img.shields.io/badge/Lombok-BC4521?style=for-the-badge&logo=lombok&logoColor=white)
+
 ## 🎯 Fonctionnalités
 
 ### 🔐 Authentification JWT
@@ -31,19 +42,6 @@ Application backend de gestion bancaire développée avec **Spring Boot 3** et *
 
 ---
 
-## 🛠️ Technologies
-
-- **Java** 21
-- **Spring Boot** 3.5.7
-- **Spring Security** + JWT
-- **Spring Data JPA** + Hibernate
-- **PostgreSQL** 14+
-- **Maven** 3.9+
-- **Lombok**
-- **Validation**
-
----
-
 ## 📋 Prérequis
 
 - Java 21+
@@ -56,7 +54,7 @@ Application backend de gestion bancaire développée avec **Spring Boot 3** et *
 
 ### 1. Cloner le projet
 ```bash
-git clone https://github.com/votre-username/bankmanager-backend.git
+git clone https://github.com/Mohmk10/bankmanager-backend.git
 cd bankmanager-backend
 ```
 
@@ -238,8 +236,8 @@ docker run -p 8080:8080 bankmanager-backend
 
 ## 👨‍💻 Auteur
 
-MOHAMED M KOUYATÉ
-- GitHub: https://github.com/Mohmk10
+**Mohamed MAKANKOUYATÉ**
+- GitHub: [@Mohmk10](https://github.com/Mohmk10)
 
 ---
 
@@ -251,4 +249,4 @@ MIT License - voir [LICENSE](LICENSE)
 
 ## 🚀 Frontend
 
-Le frontend Angular est disponible sur : [bankmanager-frontend](https://github.com/votre-username/bankmanager-frontend)
+Le frontend Angular est disponible sur : [bankmanager-frontend](https://github.com/Mohmk10/bankmanager-frontend)
